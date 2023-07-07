@@ -1,22 +1,20 @@
 use std::{process::Command, io::{Stdout}};
 use termion::raw::RawTerminal;
 
-fn boolify(result: u32) -> bool { if result == 0 { true } else { false } }
 
-pub fn parse(text: String, sign: String, stdout: &mut RawTerminal<Stdout>) -> bool {
-    if text == "" { return false }
-
+pub fn parse(text: String, sign: String, stdout: &mut RawTerminal<Stdout>) -> bool { if text == "" { return false }
     let args = text.split_whitespace().collect::<Vec<&str>>();
-    let command = args[0].to_string();
-
-    match command.as_str() {
+    match args[0] {
+        // Shell built-in commands
         "exit" => { print!("exit"); true },
 
-        _ => {
-            let empty = Command::new("/usr/bin/test").spawn().unwrap();
+
+        // Creating a new child process
+        command => {
+            let empty = Command::new("/usr/bin/test").spawn().unwrap(); // idk
             let mut not_found: bool = false;
 
-            let mut command_proc = match Command::new("/usr/bin/".to_string()+command.as_str()).args(&args[1..]).spawn() {
+            let mut command_proc = match Command::new("/usr/bin/".to_string()+command).args(&args[1..]).spawn() {
                 Ok(t) => { t }, Err(_) => { not_found = true; empty }
             };
 
@@ -33,3 +31,5 @@ pub fn parse(text: String, sign: String, stdout: &mut RawTerminal<Stdout>) -> bo
         false }
     }
 }
+// lazy way to check if proccess id is *valid*
+fn boolify(result: u32) -> bool { if result == 0 { true } else { false } }
