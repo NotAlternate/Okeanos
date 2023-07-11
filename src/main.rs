@@ -2,16 +2,19 @@ use std::{ io::{ stdin, stdout, Write }, env, env::current_dir, process::exit };
 use termion::{ event::Key, input::TermRead, raw::IntoRawMode };
 mod strings;
 mod parser;
+mod utility;
 use whoami;
 
 fn main() {
+    let errors = strings::errors(); let commands = strings::commands();
+
     // Command line parameter parsing stuff
     let args: Vec<String> = env::args().collect::<Vec<String>>();
     if args.len() != 1 { for parameter in &args { match parameter.to_lowercase().as_str() {
-        "--help" | "-h" => { println!("{}", strings::get_c(strings::Command::Help)); exit(0) }
-        "--version" | "-v" => { println!("{}", strings::get_c(strings::Command::Version)); exit(0); },
+        "--help" | "-h" => { println!("{}", commands["help"]); exit(0) }
+        "--version" | "-v" => { println!("{}", commands["version"]); exit(0); },
         asdfghjkl => { if asdfghjkl == args[0] { () } else {
-            eprintln!("{}", strings::get_e(strings::Errors::UnknownParameterPassed));
+            eprintln!("{}", errors["unknownArgument"]);
         }},
     }}}
 
@@ -25,11 +28,13 @@ fn main() {
         _ => "$"
     };
 
-    let prompt = format!("{}{}\x1b[0m@{}{}\x1b[0m: {}\n\x1b[0G{} ",
-        colour, whoami::username(), colour, whoami::hostname(), current_dir().unwrap().to_str().unwrap(), sign
-    );
-
-    loop { print!("{}", prompt); stdout.flush().unwrap();
+    loop {
+        let git_info = utility::get_git_info(&stdout, &colour);
+        let prompt = format!("{}{}\x1b[0m@{}{}\x1b[0m {}: {}\n\x1b[0G{} ",
+            colour, whoami::username(), colour, whoami::hostname(), current_dir().unwrap().to_str().unwrap(), git_info, sign
+        );
+        
+        print!("{}", prompt); stdout.flush().unwrap();
         let mut text = String::new();
         let mut column: usize = 0;
         let mut exit = false;

@@ -1,4 +1,4 @@
-use std::{process::Command, io::{Stdout}};
+use std::{process::Command, io::Stdout};
 use termion::raw::RawTerminal;
 
 
@@ -7,7 +7,6 @@ pub fn parse(text: String, sign: String, stdout: &mut RawTerminal<Stdout>) -> bo
     match args[0] {
         // Shell built-in commands
         "exit" => { print!("exit"); true },
-
 
         // Creating a new child process
         command => {
