@@ -1,17 +1,18 @@
 # Ωκεανός (Okeanos) : Shell done wrong.
 
-![GitHub top language](https://img.shields.io/github/languages/top/NotAlternate/Okeanos?color=484869&style=flat-square)
-![GitHub repo size](https://img.shields.io/github/repo-size/NotAlternate/Okeanos?color=484869&style=flat-square)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/NotAlternate/Okeanos?color=484869&style=flat-square)
+![GitHub top language](https://img.shields.io/github/languages/top/NotAlternate/Okeanos?color=2A68B0&style=flat-square)
+![GitHub repo size](https://img.shields.io/github/repo-size/NotAlternate/Okeanos?color=2A68B0&style=flat-square)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/NotAlternate/Okeanos?color=2A68B0&style=flat-square)
 
-Okeanos is a fun shell project, not aimed to replace your current shell.
+Okeanos is a shell project for fun, not aimed to replace your current shell.
 It uses termion for Raw terminal which lets it get user input without needing the user to press Enter.
 
 <p align="center"><img alt="Okeanos banner" src="./banner.png"></p>
 
 ## Prerequisites
 
-If you are running a Windows NT system, please use WSL (Windows Subsystem for Linux), and if you are using MacOS or (any) Linux (distro), you can continue the installation process.
+If you are running a Windows NT system, please use WSL (Windows Subsystem for Linux), **Okeanos does not support Windows**, support for it is unlikely to happen.<br>
+However, if you are using MacOS or (any) Linux (distro), you can continue the installation process.
 
 - Rust programming language
 - `git` or `gh` ([Github CLI](https://cli.github.com/))
@@ -25,11 +26,11 @@ Currently, there are no stable releases of Okeanos, cloning the repository direc
 ```
 cargo build
 ```
-3. Okeanos would be installed inside the `target/` directory
+3. Okeanos would be compiled as an executable inside the `target/` directory
 
 ## Contributing
 
-You can help the project by contributing to it via forking it. Instructions on how to fork it can be found [here](https://docs.github.com/en/get-started/quickstart/contributing-to-projects).
+You can help the project by contributing to it via forking it and creating a pull request. Instructions on how to fork it can be found [here](https://docs.github.com/en/get-started/quickstart/contributing-to-projects).
 
 ## GitHub pages
 
