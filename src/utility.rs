@@ -1,4 +1,4 @@
-use std::{process::{Command, exit}, str, io::Stdout};
+use std::{process::{Command, exit}, str, io::Stdout, env, path::PathBuf};
 use termion::raw::RawTerminal;
 use okeanos::strings;
 
@@ -36,4 +36,15 @@ pub fn get_git_info(stdout: &RawTerminal<Stdout>,colour: &String) -> String {
 
     if in_a_repo { format!("{}[\x1b[0m{}{}:\x1b[0m{}{}]\x1b[0m", colour, repo, colour, branch, colour) }
     else { "".to_string() }
+}
+
+
+#[allow(deprecated)] // Termion only works in linux so who cares about windows.
+pub fn shorten_path(current_path: PathBuf) -> String {
+    let home_dir = env::home_dir().unwrap();
+    if current_path.starts_with(&home_dir) {
+        let mut relative_path = PathBuf::from("~");
+        relative_path.push(current_path.strip_prefix(&home_dir).unwrap());
+        relative_path.to_string_lossy().to_string()
+    } else { current_path.to_string_lossy().to_string() }
 }

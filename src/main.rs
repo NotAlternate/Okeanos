@@ -1,9 +1,8 @@
-use std::{ io::{ stdin, stdout, Write }, env, env::current_dir, process::exit };
+use std::{ io::{ stdin, stdout, Write }, env, process::exit };
 use termion::{ event::Key, input::TermRead, raw::IntoRawMode };
 mod strings;
 mod parser;
 mod utility;
-use whoami;
 
 fn main() {
     let errors = strings::errors(); let commands = strings::commands();
@@ -30,8 +29,12 @@ fn main() {
 
     loop {
         let git_info = utility::get_git_info(&stdout, &colour);
+        let current_path = match env::current_dir() {
+            Ok(a) => utility::shorten_path(a),
+            Err(e) => { eprintln!("{} :: {}", errors["pathRetrivalFail"], e); exit(-1); }
+        };
         let prompt = format!("{}{}\x1b[0m@{}{}\x1b[0m {}: {}\n\x1b[0G{} ",
-            colour, whoami::username(), colour, whoami::hostname(), current_dir().unwrap().to_str().unwrap(), git_info, sign
+            colour, whoami::username(), colour, whoami::hostname(), current_path, git_info, sign
         );
         
         print!("{}", prompt); stdout.flush().unwrap();

@@ -6,7 +6,10 @@ pub fn errors() -> HashMap<&'static str, String> { let mut map = HashMap::new();
 
     // get_git_info()
     ("utf8Conversion", "Unexpected error while attempting to convert stdout into &str"),
-    ("invalidRepoUrl", "An invalid url was retrived.")
+    ("invalidRepoUrl", "An invalid url was retrived."),
+
+    // parser.rs
+    ("commandSpawnFail", "Unable to spawn child process for command"),
 ].iter().cloned().collect::<HashMap<&str, &str>>() { map.insert(current.0, format!("\x1b[31mxx\x1b[0m {}", current.1)); } map }
 
 const VERSION: &str = "v0.1.0";
