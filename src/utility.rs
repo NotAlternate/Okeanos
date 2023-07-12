@@ -1,6 +1,6 @@
 use std::{process::{Command, exit}, str, io::Stdout, env, path::PathBuf};
 use termion::raw::RawTerminal;
-use okeanos::strings;
+use crate::strings;
 
 // really terrible way to get git info
 // but if it works, it works.

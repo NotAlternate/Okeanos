@@ -3,6 +3,7 @@ use termion::{ event::Key, input::TermRead, raw::IntoRawMode };
 mod strings;
 mod parser;
 mod utility;
+use whoami;
 
 fn main() {
     let errors = strings::errors(); let commands = strings::commands();

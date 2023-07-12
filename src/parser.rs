@@ -1,34 +1,55 @@
-use std::{process::Command, io::Stdout};
 use termion::raw::RawTerminal;
+use std::{io::Stdout, process::exit};
+use okeanos::commands;
+use okeanos::strings;
 
+pub fn parse(text: String, sign: String, stdout: &mut RawTerminal<Stdout>) -> bool {
+    // Return here is for "should_i_exit"
+    if text == "" { return true }
+    // let warnings = strings::warnings();
 
-pub fn parse(text: String, sign: String, stdout: &mut RawTerminal<Stdout>) -> bool { if text == "" { return false }
-    let args = text.split_whitespace().collect::<Vec<&str>>();
-    match args[0] {
-        // Shell built-in commands
-        "exit" => { print!("exit"); true },
+    let mut args = Vec::<String>::new();
+    let mut buffer = Buffer::new(&text);
+    let mut word = String::new();
+    while buffer.inBounds() {
+        match buffer.getCharacter() {
+            ' ' => { args.push(word); word = String::new(); },
 
-        // Creating a new child process
-        command => {
-            let empty = Command::new("/usr/bin/test").spawn().unwrap(); // idk
-            let mut not_found: bool = false;
+            '"' => { loop { if buffer.advanceNCheck() { match buffer.getCharacter() {
+                '\\' => { if !buffer.advanceNCheck() { word.push('\\'); }
+                    word += &match buffer.getCharacter() {
+                        'n' => '\n',
+                        't' => '\t',
+                        '\'' => '\'',
+                        '\\' => '\\', 
+                        a => a,
+                    }.to_string()
+                },
+                '"' => { args.push(word); word = String::new(); buffer.advance(); break; }
+                a => word.push(a),
+            }} else { println!("not implemented yet."); return true; }}},
 
-            let mut command_proc = match Command::new("/usr/bin/".to_string()+command).args(&args[1..]).spawn() {
-                Ok(t) => { t }, Err(_) => { not_found = true; empty }
-            };
+            '\'' => { loop { if buffer.advanceNCheck() { match buffer.getCharacter() {
+                    '\'' => { args.push(word); word = String::new(); buffer.advance(); break; }
+                    a => word.push(a),
+            }} else { println!("not implemented yet."); return true; }}},
 
-            if boolify(command_proc.id()) | not_found { print!("\x1b[1F\x1b[2K\x1b[1;31m{}\x1b[0m {}\n\x1b[0G", sign, text); }
-            if not_found { print!("\x1b[1;31mx\x1b[0m Command `{}` does not exist\n\x1b[0G", command); }
-
-            stdout.suspend_raw_mode().unwrap();
-
-            if command_proc.stdout.is_some() { print!("{:?}", command_proc.stdout); }
-            if command_proc.stderr.is_some() { print!("{:?}", command_proc.stderr); }
-
-            if command_proc.wait().unwrap().success() { stdout.activate_raw_mode().unwrap(); }
-            else { stdout.activate_raw_mode().unwrap(); }
-        false }
-    }
+            a => word.push(a),
+        }
+    buffer.advance(); } if !word.is_empty() { args.push(word); }
+    commands::run_command(text, args.iter().map(|s| s.as_str()).collect(), sign, stdout)
 }
-// lazy way to check if proccess id is *valid*
-fn boolify(result: u32) -> bool { if result == 0 { true } else { false } }
+
+// yoinked from Duohexyne which was yoinked from Hexagn-rust
+pub struct Buffer {
+	data: String,
+	index: usize
+}
+#[allow(non_snake_case)]
+impl Buffer {
+    pub fn new(source: &String) -> Buffer { Buffer { data: source.clone(), index: 0 } }
+    pub fn inBounds(&self) -> bool { self.index < self.data.len() }
+    pub fn advance(&mut self) { self.index += 1 }
+    pub fn advanceNCheck(&mut self) -> bool { self.advance(); self.inBounds() }
+    pub fn getCharacter(&self) -> char { let result = match self.data.chars().nth(self.index) { Some(_result) => _result, None => { eprintln!("{}", strings::errors()["bufferGetCharacter"]); exit(-1); } }; result }
+}
