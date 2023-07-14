@@ -2,6 +2,13 @@ use std::{process::{Command, exit}, str, io::Stdout, env, path::PathBuf};
 use termion::raw::RawTerminal;
 use crate::strings;
 
+// welcome to the code that holds terrible code.
+
+#[cfg(target_os = "windows")]
+pub fn is_windows() -> bool { true }
+#[cfg(not(target_os = "windows"))]
+pub fn is_windows() -> bool { false }
+
 // really terrible way to get git info
 // but if it works, it works.
 

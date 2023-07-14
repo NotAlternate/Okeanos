@@ -1,10 +1,11 @@
 use std::{process::Command, io::Stdout};
 use termion::raw::RawTerminal;
 
-pub fn run_command(text: String, args: Vec<&str>, sign: String, stdout: &mut RawTerminal<Stdout>) -> bool {
+pub fn run_command(text: String, args: Vec<&str>, prompt: String, stdout: &mut RawTerminal<Stdout>) -> bool {
     match args[0] {
         // Shell built-in commands
         "exit" => { print!("exit"); true },
+
 
         // Creating a new child process
         command => {
@@ -15,7 +16,7 @@ pub fn run_command(text: String, args: Vec<&str>, sign: String, stdout: &mut Raw
                 Ok(t) => { t }, Err(_) => { not_found = true; empty }
             };
 
-            if boolify(command_proc.id()) | not_found { print!("\x1b[1F\x1b[2K\x1b[1;31m{}\x1b[0m {}\n\x1b[0G", sign, text); }
+            if boolify(command_proc.id()) | not_found { print!("\x1b[1F\x1b[2K\x1b[1;31m{}\x1b[0m{}\n\x1b[0G", prompt, text); }
             if not_found { print!("\x1b[1;31mx\x1b[0m Command `{}` does not exist\n\x1b[0G", command); }
 
             stdout.suspend_raw_mode().unwrap();

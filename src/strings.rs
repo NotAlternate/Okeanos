@@ -8,6 +8,8 @@ pub fn commands() -> HashMap<&'static str, String> { [
 
 
 pub fn errors() -> HashMap<&'static str, String> { let mut map = HashMap::new(); for current in [
+    ("noNTSupport", "Okeanos does not support Windows NT systems."),
+    
     // Command line arguments parser
     ("unknownArgument", "An unknown argument has been passed."),
 
