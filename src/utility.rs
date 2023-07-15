@@ -1,6 +1,7 @@
 use std::{process::{Command, exit}, str, io::Stdout, env, path::PathBuf};
 use termion::raw::RawTerminal;
 use crate::strings;
+use regex::Regex;
 
 // welcome to the code that holds terrible code.
 
@@ -8,6 +9,8 @@ use crate::strings;
 pub fn is_windows() -> bool { true }
 #[cfg(not(target_os = "windows"))]
 pub fn is_windows() -> bool { false }
+
+pub fn strip_ansi(text: &str, full: bool) -> String { Regex::new(if full { r"\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]" } else { r"\x1B\[([0-9]{1,2})?[GK]" }).unwrap().replace_all(text, "").to_string() }
 
 // really terrible way to get git info
 // but if it works, it works.

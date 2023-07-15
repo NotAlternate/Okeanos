@@ -1,7 +1,9 @@
 use std::{process::Command, io::Stdout};
 use termion::raw::RawTerminal;
+use crate::prompt_handler;
 
 pub fn run_command(text: String, args: Vec<&str>, prompt: String, stdout: &mut RawTerminal<Stdout>) -> bool {
+    stdout.suspend_raw_mode().unwrap();
     match args[0] {
         // Shell built-in commands
         "exit" => { print!("exit"); true },
@@ -16,10 +18,8 @@ pub fn run_command(text: String, args: Vec<&str>, prompt: String, stdout: &mut R
                 Ok(t) => { t }, Err(_) => { not_found = true; empty }
             };
 
-            if boolify(command_proc.id()) | not_found { print!("\x1b[1F\x1b[2K\x1b[1;31m{}\x1b[0m{}\n\x1b[0G", prompt, text); }
-            if not_found { print!("\x1b[1;31mx\x1b[0m Command `{}` does not exist\n\x1b[0G", command); }
-
-            stdout.suspend_raw_mode().unwrap();
+            if boolify(command_proc.id()) | not_found { print!("{}", prompt_handler::on_error(stdout, text)); }
+            if not_found { println!("\x1b[1;31mx\x1b[0m Command `{}` does not exist", command); }
 
             if command_proc.stdout.is_some() { print!("{:?}", command_proc.stdout); }
             if command_proc.stderr.is_some() { print!("{:?}", command_proc.stderr); }
