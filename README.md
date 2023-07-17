@@ -14,8 +14,9 @@ It uses termion for Raw terminal which lets it get user input without needing th
 If you are running a Windows NT system, please use WSL (Windows Subsystem for Linux), **Okeanos does not support Windows**, support for it is unlikely to happen.<br>
 However, if you are using MacOS or (any) Linux (distro), you can continue the installation process.
 
-- Rust programming language
+- Rust programming language ([rustup](https://rustup.rs))
 - `git` or `gh` ([Github CLI](https://cli.github.com/))
+- `sudo` (Commonly comes pre-installed)
 
 ## Installation (unstable)
 

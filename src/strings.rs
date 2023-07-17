@@ -14,8 +14,19 @@ pub fn errors() -> HashMap<&'static str, String> { let mut map = HashMap::new();
     ("unknownArgument", "An unknown argument has been passed."),
 
     // get_git_info()
-    ("utf8Conversion", "Unexpected error while attempting to convert stdout into &str"),
+    ("utf8Conversion", "Unexpected error while attempting to convert stdout into &str."),
     ("invalidRepoUrl", "An invalid url was retrived."),
+
+    // prompt_input()
+    ("stdinFail", "Unexpected error while attempting to get user input from stdin."),
+
+    // config_handler.rs
+    ("sudoElevateFail", "Unexpected error while attempting to elevate privileges."),
+    ("insufficientPrivileges", "You don't have sufficient privileges to create a system-wide configuration file."),
+    ("fileCreationFail", "Unexpected error while attempting to create a file."),
+    ("fileWriteFail", "Unexpected error while attempting to write to a file."),
+    ("missingSystemProfile", "Okeanos system profile could not be located."),
+    ("missingUserProfile", "Okeanos user profile could not be located."),
 
     // commands.rs
     ("commandSpawnFail", "Unable to spawn child process for command"),
@@ -27,4 +38,28 @@ pub fn warnings() -> HashMap<&'static str, String> { let mut map = HashMap::new(
     // parser.rs
     ("doubleQuotePrompt", "DoubleQuote >> "),
     ("SingleQuotePrompt", "SingleQuote >> "),
+
+    // config_handler.rs + utility.rs
+    ("invalidChoice", "Invalid choice, only pick `y`, `yes` or `n`, `no`."),
+    ("profileMaybeDeleted", "If this isn't your first time running, your system-wide configurations might be deleted.."),
 ].iter().cloned().collect::<HashMap<&str, &str>>() { map.insert(current.0, format!("\x1b[1;33m!!\x1b[0m {}", current.1)); } map }
+
+
+pub fn information() -> HashMap<&'static str, String> { let mut map = HashMap::new(); for current in [
+    // config_handler.rs
+    ("noUserProfile", "No local Okeanos profile could be found. Generate one?"),
+    ("noSystemProfile", "No system Okeanos profile could be found. Is this your first time running?"),
+    ("reqGenerateProfile", "Would you want to generate a new, default, system-wide Okeanos profile?"),
+    ("generationCompleteSys", "Generation completed successfully.. You will now exit Okeanos."),
+    ("generationCompleteUser", "Generation completed successfully.."),
+].iter().cloned().collect::<HashMap<&str, &str>>() { map.insert(current.0, format!("\x1b[1;36m!!\x1b[0m {}", current.1)); } map }
+
+
+pub fn note() -> HashMap<&'static str, String> { let mut map = HashMap::new(); for current in [
+    // config_handler.rs
+    ("privilegesElevated", "Successfully elevated privileges."),
+    ("sufficientPrivileges", "You have sufficient privileges to create a system-wide configuration file."),
+    ("requirePrivileges", "You will be prompted to enter your password in-order to elevate your privileges."),
+    ("requirePrompt", "Press Enter to continue; If the process was successful, Okeanos will restart."),
+    ("generatingProfile", "Generating default Okeanos profile.."),
+].iter().cloned().collect::<HashMap<&str, &str>>() { map.insert(current.0, format!("\x1b[1;2m>>\x1b[0m {}", current.1)); } map }

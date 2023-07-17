@@ -3,7 +3,7 @@ use std::{io::Stdout, process::exit};
 use okeanos::commands;
 use okeanos::strings;
 
-pub fn parse(text: String, sign: String, stdout: &mut RawTerminal<Stdout>) -> bool {
+pub fn parse(text: String, stdout: &mut RawTerminal<Stdout>) -> bool {
     // Return here is for "should_i_exit"
     if text == "" { return true }
     // let warnings = strings::warnings();
@@ -37,7 +37,7 @@ pub fn parse(text: String, sign: String, stdout: &mut RawTerminal<Stdout>) -> bo
             a => word.push(a),
         }
     buffer.advance(); } if !word.is_empty() { args.push(word); }
-    commands::run_command(text, args.iter().map(|s| s.as_str()).collect(), sign, stdout)
+    commands::run_command(text, args.iter().map(|s| s.as_str()).collect(), stdout)
 }
 
 // yoinked from Duohexyne which was yoinked from Hexagn-rust

@@ -1,4 +1,4 @@
-use std::{process::{Command, exit}, str, io::Stdout, env, path::PathBuf};
+use std::{process::{Command, exit}, str, io::{Stdout, stdout, stdin, BufRead, Write}, env, path::PathBuf};
 use termion::raw::RawTerminal;
 use crate::strings;
 use regex::Regex;
@@ -15,6 +15,7 @@ pub fn strip_ansi(text: &str, full: bool) -> String { Regex::new(if full { r"\x1
 // really terrible way to get git info
 // but if it works, it works.
 
+// prompt_handler.rs
 fn exit_stdterm(stdout: &RawTerminal<Stdout>, code: i32) { // change into standard term, exit.
     stdout.suspend_raw_mode().unwrap();
     exit(code);
@@ -49,7 +50,7 @@ pub fn get_git_info(stdout: &RawTerminal<Stdout>,colour: &String) -> String {
 }
 
 
-#[allow(deprecated)] // Termion only works in linux so who cares about windows.
+#[allow(deprecated)]
 pub fn shorten_path(current_path: PathBuf) -> String {
     let home_dir = env::home_dir().unwrap();
     if current_path.starts_with(&home_dir) {
@@ -58,3 +59,30 @@ pub fn shorten_path(current_path: PathBuf) -> String {
         relative_path.to_string_lossy().to_string()
     } else { current_path.to_string_lossy().to_string() }
 }
+
+
+// config_handler.rs
+pub fn prompt_input(text: &String) -> bool {
+    loop {
+        print!("{} :: [Y/n]: ", text); stdout().flush().unwrap();
+        match stdin().lock().lines().next().unwrap() {
+            Ok(content) => { match content.as_str() {
+                "y" | "yes" => return true,
+                "n" | "no" => return false,
+                "" => return true,
+                _ => { eprintln!("{}", strings::warnings()["invalidChoice"]); continue; },
+            }},
+            Err(error) => { eprintln!("{} :: {}", strings::errors()["stdinFail"], error); exit(-1); },
+        }
+    }
+}
+
+pub fn prompt_wait(text: &String) {
+    print!("{}", text); stdout().flush().unwrap();
+    match stdin().lock().lines().next().unwrap() {
+        Ok(content) => { match content.as_str() { _ => (), }},
+        Err(error) => { eprintln!("{} :: {}", strings::errors()["stdinFail"], error); exit(-1); },
+    }
+}
+
+pub fn clear_screen() { print!("\x1B[2J\x1B[3J\x1B[H"); }
