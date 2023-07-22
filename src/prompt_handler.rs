@@ -1,7 +1,6 @@
 use std::{io::Stdout, env, process::exit};
-use termion::raw::RawTerminal;
+use {termion::raw::RawTerminal, whoami};
 use crate::{utility, strings};
-use whoami;
 
 
 struct DefaultPrompt<'a> {

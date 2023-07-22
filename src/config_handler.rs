@@ -1,16 +1,12 @@
-use std::hash::Hash;
 use std::{collections::HashMap, env, path::Path, ffi::CString, os::raw::c_int, process::exit, fs::File, io::Write};
-use crate::strings;
-use crate::utility;
-use libc;
-use regex::Replacer;
-use sudo;
+use crate::{strings, utility};
+use {libc, sudo, toml};
 
 #[allow(deprecated)]
 pub fn check_config(sys: bool) -> bool { Path::new(&format!("{}/.okeanos_profile", if sys { "/etc".to_string() } else { env::home_dir().unwrap().to_string_lossy().to_string() })).exists() }
 
 pub struct Configurations<'a> {
-    pub data: HashMap<&'a str, String>,
+    pub data: HashMap<&'a str, HashMap<&'a str, HashMap<&'a str, String>>>,
     pub existence: bool,
 } impl Configurations<'_> {
     pub fn new() -> Self {
@@ -20,7 +16,7 @@ pub struct Configurations<'a> {
 
         match check_config(true) {
             true => { match check_config(false) {
-                true => (),
+                true => existence = true,
                 false => {
                     utility::clear_screen();
                     if utility::prompt_input(&information["noUserProfile"]) { create_configuration(false); }
@@ -43,6 +39,15 @@ pub struct Configurations<'a> {
         let data = HashMap::new();
 
         Self { data, existence }
+    }
+    pub fn check(&mut self) {
+        match check_config(false) {
+            true => { match check_config(true) {
+                true => self.existence = true,
+                false => { if self.existence { println!("{}", strings::warnings()["missingSysProfile"]); }}
+            }},
+            false => { if self.existence { println!("{}", strings::warnings()["missingUserProfile"]); }}
+        }
     }
 }
 

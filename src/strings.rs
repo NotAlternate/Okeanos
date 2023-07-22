@@ -13,9 +13,16 @@ pub fn errors() -> HashMap<&'static str, String> { let mut map = HashMap::new();
     // Command line arguments parser
     ("unknownArgument", "An unknown argument has been passed."),
 
+    // file stuff
+    ("fileCreationFail", "Unexpected error while attempting to create a file."),
+    ("fileWriteFail", "Unexpected error while attempting to write to a file."),
+
     // get_git_info()
     ("utf8Conversion", "Unexpected error while attempting to convert stdout into &str."),
     ("invalidRepoUrl", "An invalid url was retrived."),
+
+    // parser.rs
+    ("missingFileRedirect", "Missing filename to redirect output to after symbol `>`"),
 
     // prompt_input()
     ("stdinFail", "Unexpected error while attempting to get user input from stdin."),
@@ -23,8 +30,6 @@ pub fn errors() -> HashMap<&'static str, String> { let mut map = HashMap::new();
     // config_handler.rs
     ("sudoElevateFail", "Unexpected error while attempting to elevate privileges."),
     ("insufficientPrivileges", "You don't have sufficient privileges to create a system-wide configuration file."),
-    ("fileCreationFail", "Unexpected error while attempting to create a file."),
-    ("fileWriteFail", "Unexpected error while attempting to write to a file."),
     ("missingSystemProfile", "Okeanos system profile could not be located."),
     ("missingUserProfile", "Okeanos user profile could not be located."),
 
@@ -42,6 +47,8 @@ pub fn warnings() -> HashMap<&'static str, String> { let mut map = HashMap::new(
     // config_handler.rs + utility.rs
     ("invalidChoice", "Invalid choice, only pick `y`, `yes` or `n`, `no`."),
     ("profileMaybeDeleted", "If this isn't your first time running, your system-wide configurations might be deleted.."),
+    ("missingSysProfile", "System-wide configuration failed to be located. Was it accidentally deleted during this session?"),
+    ("missingUserProfile", "User configuration failed to be located. Was it accidentally deleted during this session?"),
 ].iter().cloned().collect::<HashMap<&str, &str>>() { map.insert(current.0, format!("\x1b[1;33m!!\x1b[0m {}", current.1)); } map }
 
 

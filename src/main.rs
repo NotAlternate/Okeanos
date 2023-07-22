@@ -22,7 +22,7 @@ fn main() { let errors = strings::errors(); let commands = strings::commands();
     }}}
 
     // Config stuff
-    let config = config_handler::Configurations::new();
+    let mut config = config_handler::Configurations::new();
     // println!("{:?}", config.data); // debug
 
     // Shell starts here
@@ -74,6 +74,8 @@ fn main() { let errors = strings::errors(); let commands = strings::commands();
         if done {
             stdout.suspend_raw_mode().unwrap(); println!();
             if parser::parse(text, &mut stdout) { break }
+            config.check(); // Checking for configuration's existence.
+            stdout.activate_raw_mode().unwrap();
         }
     }
 }

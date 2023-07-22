@@ -1,7 +1,6 @@
 use std::{process::{Command, exit}, str, io::{Stdout, stdout, stdin, BufRead, Write}, env, path::PathBuf};
-use termion::raw::RawTerminal;
+use {termion::raw::RawTerminal, regex::Regex};
 use crate::strings;
-use regex::Regex;
 
 // welcome to the code that holds terrible code.
 
