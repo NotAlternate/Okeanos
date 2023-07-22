@@ -1,6 +1,6 @@
 use std::{collections::HashMap, env, path::Path, ffi::CString, os::raw::c_int, process::exit, fs::File, io::Write};
 use crate::{strings, utility};
-use {libc, sudo, toml};
+use {libc, sudo};
 
 #[allow(deprecated)]
 pub fn check_config(sys: bool) -> bool { Path::new(&format!("{}/.okeanos_profile", if sys { "/etc".to_string() } else { env::home_dir().unwrap().to_string_lossy().to_string() })).exists() }

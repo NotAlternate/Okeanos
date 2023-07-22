@@ -1,4 +1,4 @@
-use std::{io::{Stdout, Write}, io::stdout, process::exit};
+use std::{io::{Stdout, Write}, io::stdout, process::exit, env};
 use okeanos::{commands, strings};
 use termion::raw::RawTerminal;
 
@@ -17,7 +17,7 @@ pub fn parse(text: String, stdout: &mut RawTerminal<Stdout>) -> bool {
 
     while buffer.inBounds() {
         match buffer.getCharacter() {
-            ' ' => { args.push(word); word = String::new(); },
+            ' ' => { replace_push(&mut args, word); word = String::new(); },
 
             // Quotations
             '"' => { loop { if buffer.advanceNCheck() { match buffer.getCharacter() {
@@ -50,7 +50,7 @@ pub fn parse(text: String, stdout: &mut RawTerminal<Stdout>) -> bool {
         }
     buffer.advance(); }
     
-    if !word.is_empty() { args.push(word); }
+    if !word.is_empty() { replace_push(&mut args, word); }
     
     commands::run_command(text, args.iter().map(|s| s.as_str()).collect(), stdout)
 }
@@ -73,3 +73,8 @@ fn quotation_warn(prompt: &String) -> String {
     print!("{}", prompt); stdout().flush().unwrap();
     "\"".to_string() // later
 }
+
+#[allow(deprecated)]
+fn replace_push(args: &mut Vec<String>, mut word: String) {
+    if word.starts_with("~") { word.replace_range(0..1, &env::home_dir().unwrap().to_string_lossy().to_string()) }
+args.push(word) }

@@ -24,6 +24,8 @@ struct DefaultPrompt<'a> {
             self.accent, whoami::username(), self.accent, whoami::hostname(), current_path, git_info, self.sign
         )
     }
+
+    #[allow(dead_code)] // rust checker thingy gets bugged..?
     pub fn on_error(self, stdout: &RawTerminal<Stdout>, text: String) -> String {
         format!("\x1b[1F\x1b[2K{}\x1b[1;31m{}\x1b[0m {}\n",get_last_of_prompt(stdout, true).strip_suffix(&format!("{} ", self.sign)).unwrap().to_string(), self.sign, text)
     }
@@ -34,6 +36,7 @@ pub fn get_prompt(stdout: &RawTerminal<Stdout>) -> String {
     DefaultPrompt::new().get(stdout) // Temporary, custom prompts are planned.
 }
 
+#[allow(dead_code)] // rust checker thingy gets bugged..?
 pub fn on_error(stdout: &RawTerminal<Stdout>, text: String) -> String {
     DefaultPrompt::new().on_error(stdout, text) // Temporary, custom prompts are planned.
 }

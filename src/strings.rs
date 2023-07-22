@@ -35,6 +35,12 @@ pub fn errors() -> HashMap<&'static str, String> { let mut map = HashMap::new();
 
     // commands.rs
     ("commandSpawnFail", "Unable to spawn child process for command"),
+
+    // Built-in commands
+    ("directorySetFail", "Unexpected error while trying to change directory"),
+    ("requiredSingleArgument", "command `cd` requires only one argument to be passed"),
+    ("cdArgumentIsNotADirectory", "Passed argument was not a directory"),
+    ("pathDoesntExist", "Specified path could not be located, i.e. does not exist."),
 ].iter().cloned().collect::<HashMap<&str, &str>>() { map.insert(current.0, format!("\x1b[1;31mxx\x1b[0m {}", current.1)); } map }
 
 
