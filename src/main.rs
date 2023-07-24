@@ -32,7 +32,6 @@ fn main() { let errors = strings::errors(); let commands = strings::commands();
         print!("{}", prompt_handler::get_prompt(&stdout)); stdout.flush().unwrap();
         let mut text = String::new();
         let mut cursor: usize = 0;
-        let mut exit = false;
         let mut done = false;
 
         stdout.activate_raw_mode().unwrap();
@@ -40,8 +39,11 @@ fn main() { let errors = strings::errors(); let commands = strings::commands();
         for c in stdin().keys() {
             let prompt = prompt_handler::get_last_of_prompt(&stdout, true);
             let length = prompt_handler::get_last_len(&stdout);
-            match c.as_ref().unwrap() {
-                Key::Ctrl('c') => { exit = true; break }, // temporary?
+            match match c.as_ref() { Ok(c) => c, Err(e) => {
+                stdout.suspend_raw_mode().unwrap(); print!("\x1b[2J");
+                utility::prompt_wait(&format!("{} :: {}\nExitting on keypress..", errors["unwrapFail"], e)); exit(-1);
+            }} {
+                Key::Ctrl('c') => { break },
                 Key::Char('\n') => { done = true; break },
 
                 
@@ -70,7 +72,6 @@ fn main() { let errors = strings::errors(); let commands = strings::commands();
 
                 _ => ()
         }}
-        if exit { break }
         if done {
             stdout.suspend_raw_mode().unwrap(); println!();
             if parser::parse(text, &mut stdout) { break }
