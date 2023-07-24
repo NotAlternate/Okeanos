@@ -41,9 +41,10 @@ pub fn parse(text: String, stdout: &mut RawTerminal<Stdout>) -> bool {
             }} else { quotation_warn(&warnings["singleQuotePrompt"]); }}},
 
             // Redirect output to a file.
-            '>' => { if !word.is_empty() { args.push(word.clone()); } if buffer.advanceNCheck() { while buffer.inBounds() {
-                redirect.push(buffer.getCharacter()); buffer.advance()
-            }} else { println!("{}", errors["missingFileRedirect"]); has_error = true }}
+            '>' => { if !word.is_empty() { args.push(word.clone()); } if buffer.advanceNCheck() { let mut first = true; while buffer.inBounds() { match buffer.getCharacter() {
+                ' ' => { if first { while buffer.inBounds() { match buffer.getCharacter() { ' ' => (), ch => { redirect.push(ch); break; } } buffer.advance() } first = false; } else { redirect.push(' '); } }
+                character => { redirect.push(character); }
+            } buffer.advance() }} else { println!("{}", errors["missingFileRedirect"]); has_error = true }}
 
             a => word.push(a),
         }
