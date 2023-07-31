@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 const VERSION: &str = "v0.1.0";
 pub fn commands() -> HashMap<&'static str, String> { [
-    ("help", format!("\x1b[1mOkeanos {}\x1b[0m\nA shell project done \x1b[4mterrible\x1b[0m.\n\nProgram parameters:\n    \x1b[1mOkeanos\x1b[0m <INPUT> [FLAGS]\n\nProgram flags:\n    \x1b[1m--help\x1b[0m & \x1b[1m-h\x1b[0m  ::  Shows Okeanos's description and usage.\n    \x1b[1m--version\x1b[0m & \x1b[1m-v\x1b[0m  ::  Outputs current version of the shell.", VERSION)),
+    ("help", format!("\x1b[1mOkeanos {}\x1b[0m\nA shell project done \x1b[4mterrible\x1b[0m.\n\nProgram parameters:\n    \x1b[1mOkeanos\x1b[0m [FLAGS]\n\nProgram flags:\n    \x1b[1m--help\x1b[0m & \x1b[1m-h\x1b[0m  ::  Shows Okeanos's description and usage.\n    \x1b[1m--version\x1b[0m & \x1b[1m-v\x1b[0m  ::  Outputs current version of Okeanos.", VERSION)),
     ("version", VERSION.to_string()),
 ].iter().cloned().collect::<HashMap<&str, String>>() }
 

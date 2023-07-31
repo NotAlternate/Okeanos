@@ -24,12 +24,13 @@ It is recommended to install the Rust programming language via ([Rustup](https:/
     - If you want to run Okeanos directly from your shell: <br>
         Try configuring your current shell to include Cargo's binaries in the `PATH` variable (if it wasn't automatically included by `rustup`) by including the following:
         `export PATH="$PATH:$HOME/.cargo/bin"`
+        In your shell's configurations
 - `git` or `gh` ([Github CLI](https://cli.github.com/)) <br> *\* not required if you download the repository via Web or Desktop*
 
 ## Installation (unstable)
 
 Currently, there are no stable releases of Okeanos, cloning the repository directly will give you the in-development or unstable version.
-Proceed if you are alright with it.
+Proceed if you are willing to face consequences.
 
 #### CLONING, BUILDING AND INSTALLING
 
@@ -39,7 +40,7 @@ Proceed if you are alright with it.
 $ cargo build --release
 $ cargo install --path .
 ```
-3. Okeanos would be compiled as an executable inside the `./target/release/` directory and installed to your Cargo binaries.
+3. Okeanos should be compiled as an executable inside the `./target/release/` directory and installed to your Cargo binaries.
 
 #### CHANGING DEFAULT SHELL (OPTIONAL)
 
