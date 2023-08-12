@@ -1,5 +1,5 @@
-use std::{io::{Stdout, Write}, io::stdout, process::exit, env};
-use okeanos::{commands, strings};
+use std::{io::Stdout, process::exit, env};
+use crate::{commands, strings};
 use termion::raw::RawTerminal;
 
 pub fn parse(text: String, stdout: &mut RawTerminal<Stdout>) -> bool {
@@ -7,7 +7,6 @@ pub fn parse(text: String, stdout: &mut RawTerminal<Stdout>) -> bool {
 
     // Return here is for "should_i_exit"
     if text.replace(" ", "") == "" { return false }
-    let warnings = strings::warnings();
 
     let mut args = Vec::<String>::new();
     let mut buffer = Buffer::new(&text);
@@ -31,14 +30,17 @@ pub fn parse(text: String, stdout: &mut RawTerminal<Stdout>) -> bool {
                         a => a,
                     }.to_string()
                 },
-                '"' => { args.push(word); word = String::new(); buffer.advance(); break; }
+                '"' => { if buffer.advanceNCheck() { match buffer.getCharacter() { ' ' => (), _ => {
+                    while buffer.inBounds() { match buffer.getCharacter() { ' ' => break, abc => word.push(abc) } buffer.advance(); }
+                }}} args.push(word); word = String::new(); break; }
+                
                 a => word.push(a),
-            }} else { quotation_warn(&warnings["doubleQuotePrompt"]); }}},
+            }} else { println!("Not implemented"); return false }}},
 
             '\'' => { loop { if buffer.advanceNCheck() { match buffer.getCharacter() {
-                    '\'' => { args.push(word); word = String::new(); buffer.advance(); break; }
+                    '\'' => { args.push(word); word = String::new(); break; }
                     a => word.push(a),
-            }} else { quotation_warn(&warnings["singleQuotePrompt"]); }}},
+            }} else { println!("Not implemented."); return false }}},
 
             // Redirect output to a file.
             '>' => { if !word.is_empty() { args.push(word.clone()); } if buffer.advanceNCheck() { let mut first = true; while buffer.inBounds() { match buffer.getCharacter() {
@@ -53,8 +55,7 @@ pub fn parse(text: String, stdout: &mut RawTerminal<Stdout>) -> bool {
     if has_error { return false }
     if !word.is_empty() { replace_push(&mut args, word); }
     
-    commands::run_command(text, args.iter().map(|s| s.as_str()).collect(), stdout, redirect)
-}
+commands::run_command(text, args.iter().map(|s| s.as_str()).collect(), stdout, redirect) }
 
 // yoinked from Duohexyne which was yoinked from Hexagn-rust
 pub struct Buffer {
@@ -68,11 +69,6 @@ impl Buffer {
     pub fn advance(&mut self) { self.index += 1 }
     pub fn advanceNCheck(&mut self) -> bool { self.advance(); self.inBounds() }
     pub fn getCharacter(&self) -> char { let result = match self.data.chars().nth(self.index) { Some(_result) => _result, None => { eprintln!("{}", strings::errors()["bufferGetCharacter"]); exit(-1); } }; result }
-}
-
-fn quotation_warn(prompt: &String) -> String {
-    print!("{}", prompt); stdout().flush().unwrap();
-    "\"".to_string() // later
 }
 
 #[allow(deprecated)]

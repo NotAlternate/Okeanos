@@ -1,10 +1,7 @@
-use std::{ io::{ stdin, stdout, Write }, env, process::exit };
 use termion::{ event::Key, input::TermRead, raw::IntoRawMode };
-mod config_handler;
-mod prompt_handler;
-mod strings;
-mod utility;
-mod parser;
+use std::{ io::{ stdin, stdout, Write }, env, process::exit };
+use okeanos::*;
+
 
 fn main() { let errors = strings::errors(); let commands = strings::commands();
 
@@ -43,8 +40,8 @@ fn main() { let errors = strings::errors(); let commands = strings::commands();
                 stdout.suspend_raw_mode().unwrap(); print!("\x1b[2J");
                 utility::prompt_wait(&format!("{} :: {}\nExitting on keypress..", errors["unwrapFail"], e)); exit(-1);
             }} {
-                Key::Ctrl('c') => { break },
-                Key::Char('\n') => { done = true; break },
+                Key::Ctrl('c') => { done=true; text="".to_string(); break },
+                Key::Char('\n') => { done=true; break },
 
                 
                 // configuration, history and stuff
