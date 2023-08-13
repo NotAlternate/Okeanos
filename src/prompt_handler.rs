@@ -18,7 +18,7 @@ struct DefaultPrompt<'a> {
         let git_info = utility::get_git_info(&stdout, &self.accent);
         let current_path = match env::current_dir() {
             Ok(a) => utility::shorten_path(a),
-            Err(e) => { eprintln!("{} :: {}", strings::errors()["pathRetrivalFail"], e); exit(-1); }
+            Err(e) => { eprintln!("{} :: {}", strings::fetch("errors.pathRetrivialFail"), e); exit(-1); }
         };
         format!("{}{}\x1b[0m@{}{}\x1b[0m {}: {}\n{} ",
             self.accent, whoami::username(), self.accent, whoami::hostname(), current_path, git_info, self.sign

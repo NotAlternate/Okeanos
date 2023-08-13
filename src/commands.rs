@@ -1,12 +1,10 @@
-use std::{process::{Command, Stdio}, io::{Stdout, Read, Write}, path::Path, fs::File, collections::HashMap, env};
+use std::{process::{Command, Stdio}, io::{Stdout, Read, Write}, path::Path, fs::File, env};
 use termion::raw::RawTerminal;
 use crate::{prompt_handler, strings};
 
 
 #[allow(deprecated)]
 pub fn run_command(text: String, args: Vec<&str>, stdout: &mut RawTerminal<Stdout>, redirect: String) -> bool {
-    let errors = strings::errors();
-
     stdout.suspend_raw_mode().unwrap();
     match args[0] {
         // Shell built-in commands
@@ -15,26 +13,26 @@ pub fn run_command(text: String, args: Vec<&str>, stdout: &mut RawTerminal<Stdou
                 1 => { where_to = env::home_dir().unwrap().to_string_lossy().to_string() }
                 2 => { where_to = match Path::new(args[1]) {
                     exists if exists.exists() => {
-                        if exists.is_file() { println!("{}", errors["cdArgumentIsNotADirectory"]); return false }
+                        if exists.is_file() { println!("{}", strings::fetch("errors.shell.cdArgumentIsNotADirectory")); return false }
                         else { args[1].to_string() }
-                    }, _ => { println!("{}", errors["pathDoesntExist"]); return false }
+                    }, _ => { println!("{}", strings::fetch("errors.shell.pathDoesntExist")); return false }
                 }},
-                _ => { println!("{}", errors["requiredSingleArgument"]); return false }
+                _ => { println!("{}", strings::fetch("errors.shell.requiredSingleArgument")); return false }
             } match env::set_current_dir(Path::new(&where_to)) {
-                Ok(_) => (), Err(e) => println!("{} :: {}", errors["directorySetFail"], e)
+                Ok(_) => (), Err(e) => println!("{} :: {}", strings::fetch("errors.shell.directorySet"), e)
         } false }
 
         // cd minus the cd but with run feature
         cd if Path::new(cd).exists() => {
-            if Path::new(cd).is_file() { return process_create(cd, args, text, stdout, String::new(), errors, true) }
+            if Path::new(cd).is_file() { return process_create(cd, args, text, stdout, String::new(), true) }
             else { match env::set_current_dir(cd) {
-                Ok(_) => (), Err(e) => println!("{} :: {}", errors["directorySetFail"], e)
+                Ok(_) => (), Err(e) => println!("{} :: {}", strings::fetch("errors.shell.directorySet"), e)
         }} false }
 
-command => { process_create(command, args, text, stdout, redirect, errors, false) }}}
+command => { process_create(command, args, text, stdout, redirect, false) }}}
 
 // fauncteions
-fn process_create(command: &str, args: Vec<&str>, text: String, stdout: &RawTerminal<Stdout>, redirect: String, errors: HashMap<&'static str, String>,explicit: bool) -> bool {
+fn process_create(command: &str, args: Vec<&str>, text: String, stdout: &RawTerminal<Stdout>, redirect: String, explicit: bool) -> bool {
     let empty = Command::new("/usr/bin/test").spawn().unwrap(); // idk
     let mut not_found: bool = false;
 
@@ -57,8 +55,8 @@ fn process_create(command: &str, args: Vec<&str>, text: String, stdout: &RawTerm
         sadout = if sadout.ends_with('\n') || sadout.is_empty() { sadout } else { sadout+"\n" };
         match File::create(Path::new(&redirect)) {
             Ok(mut file) => { match file.write_all(sadout.as_bytes()) {
-                Ok(_) => (), Err(e) => { eprintln!("{} :: {}", errors["fileWriteFail"], e); return false }
-        }}, Err(e) => { eprintln!("{} :: {}", errors["fileCreationFail"], e); return false }
+                Ok(_) => (), Err(e) => { eprintln!("{} :: {}", strings::fetch("errors.fileWriteFail"), e); return false }
+        }}, Err(e) => { eprintln!("{} :: {}", strings::fetch("errors.fileCreationFail"), e); return false }
     }}
 
     if !command_proc.wait().unwrap().success() { print!("{}", prompt_handler::on_error(stdout, &text)); }

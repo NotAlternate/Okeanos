@@ -3,8 +3,6 @@ use crate::{commands, strings};
 use termion::raw::RawTerminal;
 
 pub fn parse(text: String, stdout: &mut RawTerminal<Stdout>) -> bool {
-    let errors = strings::errors();
-
     // Return here is for "should_i_exit"
     if text.replace(" ", "") == "" { return false }
 
@@ -46,7 +44,7 @@ pub fn parse(text: String, stdout: &mut RawTerminal<Stdout>) -> bool {
             '>' => { if !word.is_empty() { args.push(word.clone()); } if buffer.advanceNCheck() { let mut first = true; while buffer.inBounds() { match buffer.getCharacter() {
                 ' ' => { if first { while buffer.inBounds() { match buffer.getCharacter() { ' ' => (), ch => { redirect.push(ch); break; } } buffer.advance() } first = false; } else { redirect.push(' '); } }
                 character => { redirect.push(character); }
-            } buffer.advance() }} else { println!("{}", errors["missingFileRedirect"]); has_error = true }}
+            } buffer.advance() }} else { println!("{}", strings::fetch("errors.parser.missingFileRedirect")); has_error = true }}
 
             a => word.push(a),
         }
@@ -68,7 +66,7 @@ impl Buffer {
     pub fn inBounds(&self) -> bool { self.index < self.data.len() }
     pub fn advance(&mut self) { self.index += 1 }
     pub fn advanceNCheck(&mut self) -> bool { self.advance(); self.inBounds() }
-    pub fn getCharacter(&self) -> char { let result = match self.data.chars().nth(self.index) { Some(_result) => _result, None => { eprintln!("{}", strings::errors()["bufferGetCharacter"]); exit(-1); } }; result }
+    pub fn getCharacter(&self) -> char { let result = match self.data.chars().nth(self.index) { Some(_result) => _result, None => { eprintln!("{}", strings::fetch("errors.parser.bufferFetch")); exit(-1); } }; result }
 }
 
 #[allow(deprecated)]

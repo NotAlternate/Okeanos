@@ -3,18 +3,17 @@ use std::{ io::{ stdin, stdout, Write }, env, process::exit };
 use okeanos::*;
 
 
-fn main() { let errors = strings::errors(); let commands = strings::commands();
-
+fn main() {
     // Termion does not support Windows, so Okeanos does not support Windows as well, if it wasn't clear to you.
-    if utility::is_windows() { eprintln!("{}", errors["noNTSupport"]); exit(-1); }
+    if utility::is_windows() { eprintln!("{}", strings::fetch("errors.noNTSupport")); exit(-1); }
 
     // Command line parameter parsing stuff
     let args: Vec<String> = env::args().collect::<Vec<String>>();
     if args.len() != 1 { for parameter in &args { match parameter.to_lowercase().as_str() {
-        "--help" | "-h" => { println!("{}", commands["help"]); exit(0) }
-        "--version" | "-v" => { println!("{}", commands["version"]); exit(0); },
+        "--help" | "-h" => { println!("{}", strings::fetch("commands.help")); exit(0) }
+        "--version" | "-v" => { println!("{}", strings::fetch("commands.version")); exit(0); },
         asdfghjkl => { if asdfghjkl == args[0] { () } else {
-            eprintln!("{}", errors["unknownArgument"]);
+            eprintln!("{}", strings::fetch("errors.unknownArgument"));
         }},
     }}}
 
@@ -38,7 +37,7 @@ fn main() { let errors = strings::errors(); let commands = strings::commands();
             let length = prompt_handler::get_last_len(&stdout);
             match match c.as_ref() { Ok(c) => c, Err(e) => {
                 stdout.suspend_raw_mode().unwrap(); print!("\x1b[2J");
-                utility::prompt_wait(&format!("{} :: {}\nExitting on keypress..", errors["unwrapFail"], e)); exit(-1);
+                utility::prompt_wait(&format!("{} :: {}\nExitting on keypress..", strings::fetch("errors.unwrapFail"), e)); exit(-1);
             }} {
                 Key::Ctrl('c') => { done=true; text="".to_string(); break },
                 Key::Char('\n') => { done=true; break },

@@ -21,7 +21,6 @@ fn exit_stdterm(stdout: &RawTerminal<Stdout>, code: i32) { // change into standa
 }
 
 pub fn get_git_info(stdout: &RawTerminal<Stdout>,colour: &String) -> String {
-    let errors = strings::errors();
     let mut in_a_repo = true;
 
     let command_repo = Command::new("/usr/bin/".to_string()+"git").args(["config", "--get", "remote.origin.url"]).output().expect("");
@@ -30,9 +29,9 @@ pub fn get_git_info(stdout: &RawTerminal<Stdout>,colour: &String) -> String {
     let repo = match str::from_utf8(&command_repo.stdout) {
         Ok(val) => { match val.split('/').last() {
             Some(val) => val.split(".git").next().unwrap(),
-            _ => { eprintln!("{}", errors["invalidRepoUrl"]); exit_stdterm(stdout, -1); "" }
+            _ => { eprintln!("{}", strings::fetch("errors.git.invalidRepoURL")); exit_stdterm(stdout, -1); "" }
         }},
-        Err(_) => { eprintln!("{}", errors["utf8Conversion"]); exit_stdterm(stdout, -1); "" },
+        Err(_) => { eprintln!("{}", strings::fetch("errors.utf8Conversion")); exit_stdterm(stdout, -1); "" },
     };
 
     if !command_branch.stderr.is_empty() { in_a_repo = false; }
@@ -41,7 +40,7 @@ pub fn get_git_info(stdout: &RawTerminal<Stdout>,colour: &String) -> String {
             "" => { in_a_repo = false; "" }
             val => val.strip_suffix('\n').unwrap(),
         }},
-        Err(_) => { eprintln!("{}", errors["utf8Conversion"]); exit_stdterm(stdout, -1); "" },
+        Err(_) => { eprintln!("{}", strings::fetch("errors.utf8Conversion")); exit_stdterm(stdout, -1); "" },
     };
 
     if in_a_repo { format!("{}[\x1b[0m{}{}:\x1b[0m{}{}]\x1b[0m", colour, repo, colour, branch, colour) }
@@ -69,9 +68,9 @@ pub fn prompt_input(text: &String) -> bool {
                 "y" | "yes" => return true,
                 "n" | "no" => return false,
                 "" => return true,
-                _ => { eprintln!("{}", strings::warnings()["invalidChoice"]); continue; },
+                _ => { eprintln!("{}", strings::fetch("warning.prompt.invalidChoice")); continue; },
             }},
-            Err(error) => { eprintln!("{} :: {}", strings::errors()["stdinFail"], error); exit(-1); },
+            Err(error) => { eprintln!("{} :: {}", strings::fetch("errors.stdinFail"), error); exit(-1); },
         }
     }
 }
@@ -80,7 +79,7 @@ pub fn prompt_wait(text: &String) {
     print!("{}", text); stdout().flush().unwrap();
     match stdin().lock().lines().next().unwrap() {
         Ok(content) => { match content.as_str() { _ => (), }},
-        Err(error) => { eprintln!("{} :: {}", strings::errors()["stdinFail"], error); exit(-1); },
+        Err(error) => { eprintln!("{} :: {}", strings::fetch("errors.stdinFail"), error); exit(-1); },
     }
 }
 
