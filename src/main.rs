@@ -2,7 +2,6 @@ use termion::{ event::Key, input::TermRead, raw::IntoRawMode };
 use std::{ io::{ stdin, stdout, Write }, env, process::exit };
 use okeanos::*;
 
-
 fn main() {
     // Termion does not support Windows, so Okeanos does not support Windows as well, if it wasn't clear to you.
     if utility::is_windows() { eprintln!("{}", strings::fetch("errors.noNTSupport")); exit(-1); }
@@ -11,7 +10,8 @@ fn main() {
     let args: Vec<String> = env::args().collect::<Vec<String>>();
     if args.len() != 1 { for parameter in &args { match parameter.to_lowercase().as_str() {
         "--help" | "-h" => { println!("{}", strings::fetch("commands.help")); exit(0) }
-        "--version" | "-v" => { println!("{}", strings::fetch("commands.version")); exit(0); },
+        "--version" | "-v" => { println!("{}", strings::fetch("commands.version")); println!("Checking for updates.."); version::update("https://raw.githubusercontent.com/NotAlternate/Okeanos/main/VERSION"); exit(0); },
+        "--update" | "-u" => { version::update("https://raw.githubusercontent.com/NotAlternate/Okeanos/main/VERSION"); exit(0); },
         asdfghjkl => { if asdfghjkl == args[0] { () } else {
             eprintln!("{}", strings::fetch("errors.unknownArgument"));
         }},
